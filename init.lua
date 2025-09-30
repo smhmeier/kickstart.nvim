@@ -191,6 +191,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- Disable F1
+vim.keymap.set('n', '<F1>', '<Nop>', { noremap = true, silent = true });
+vim.keymap.set('i', '<F1>', '<Nop>', { noremap = true, silent = true });
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -685,7 +688,9 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          cmd = { "clangd", "--assume-filename=foo.hpp" }
+        },
         -- gopls = {},
         jedi_language_server = {},
         -- rust_analyzer = {},
@@ -921,7 +926,7 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  { 'folke/todo-comments.nvim',  event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1012,6 +1017,7 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+  { 'Civitasv/cmake-tools.nvim', opts = {} }
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1032,6 +1038,17 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+})
+
+-- Python-specific tab settings
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
+  callback = function()
+    vim.opt_local.expandtab = false -- Use tabs instead of spaces
+    vim.opt_local.tabstop = 4       -- Number of spaces a tab counts for
+    vim.opt_local.shiftwidth = 4    -- Number of spaces for auto-indent
+    vim.opt_local.softtabstop = 4   -- Number of spaces a tab counts for while editing
+  end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
